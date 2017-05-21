@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.example</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<artifactId>test-2</artifactId>
+	<packaging>jar</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.bitbucket.nelchael</groupId>
+				<artifactId>web-optimizer-maven-plugin</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<configuration>
+					<output-directory>${project.basedir}/target/${build.finalName}/</output-directory>
+					<js-source-directory>${project.basedir}/src/main/javascript</js-source-directory>
+					<js-source-files>
+						<file>foo1.js</file>
+						<file>foo-2.js</file>
+						<file>subdir/foo-3.js</file>
+					</js-source-files>
+					<css-source-directory>${project.basedir}/src/main/css</css-source-directory>
+					<css-source-files>
+						<file>bar1.css</file>
+						<file>bar-2.css</file>
+						<file>subdir/bar-3.css</file>
+					</css-source-files>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>web-optimizer</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
