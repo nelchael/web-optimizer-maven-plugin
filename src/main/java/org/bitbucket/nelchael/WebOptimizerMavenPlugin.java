@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -54,26 +53,28 @@ public class WebOptimizerMavenPlugin extends AbstractMojo {
 		StringBuilder processOutput = new StringBuilder();
 		try {
 			long processStart = System.currentTimeMillis();
+
 			Process process = new ProcessBuilder(finalCommandLine).redirectErrorStream(true).start();
-			process.waitFor();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			reader.lines().forEach(new Consumer<String>() {
-				@Override
-				public void accept(String s) {
-					processOutput.append(s).append("\n");
+			while (process.isAlive()) {
+				if (reader.ready()) {
+					processOutput.append(reader.readLine()).append("\n");
 				}
-			});
+			}
+			reader.close();
+
 			long processDuration = System.currentTimeMillis() - processStart;
+
 			if (process.exitValue() != 0) {
 				getLog().error(processOutput.toString());
 				throw new MojoExecutionException(command + " failed with exit code " + process.exitValue());
 			} else {
 				getLog().info(command + " completed in " + processDuration + "ms");
 				getLog().debug("-- " + command + " output --");
-				getLog().debug(processOutput.toString());
+				getLog().debug(processOutput.toString().trim());
 				getLog().debug("-- end " + command + " output --");
 			}
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException e) {
 			throw new MojoExecutionException(command + " failed", e);
 		}
 	}
